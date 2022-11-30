@@ -36,6 +36,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
                 'Email already in use'
             )
         return email
+
     def validate(self, attrs):
         password = attrs.get('password')
         password_confirm = attrs.pop('password_confirm')

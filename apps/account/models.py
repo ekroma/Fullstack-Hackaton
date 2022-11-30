@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.utils.crypto import get_random_string
+from django.core.validators import FileExtensionValidator
 
+from apps.base.services import get_upload_path_avatar, validate_image_size
 
 class UserManager(BaseUserManager):
     def _create(self, username, email, password, **extra_fields):
@@ -35,7 +37,12 @@ class User(AbstractBaseUser):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
     activation_code = models.CharField(max_length=8, blank=True)
-
+    avatar = models.ImageField(
+        upload_to=get_upload_path_avatar,
+        blank=True,
+        null=True,
+        validators=[FileExtensionValidator(allowed_extensions=['jpg']), validate_image_size]
+    )
     objects = UserManager()
 
     USERNAME_FIELD = 'username'
@@ -62,4 +69,18 @@ class User(AbstractBaseUser):
         verbose_name_plural = 'Users'
 
 
-    
+class Follower(models.Model):
+    user = models.ForeignKey(
+        to=User,
+        on_delete=models.CASCADE,
+        related_name='owner'
+    )
+    subscriber = models.ForeignKey(
+        to=User,
+        on_delete=models.CASCADE,
+        related_name='subscribers'
+    )
+
+    def __str__(self) -> str:
+        return f'{self.subscriber} subscribed to {self.user}'
+
