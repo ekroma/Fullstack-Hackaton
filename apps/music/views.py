@@ -6,16 +6,20 @@ from rest_framework.permissions import (
     IsAdminUser, 
     AllowAny
     )
-
+from rest_framework.generics import ListAPIView
+from rest_framework.parsers import MultiPartParser
 from .serializers import (
+    CreatePlayListSerializer,
     TrackListSerialiers, 
-    TrackSerializer
+    TrackSerializer,
+    GenreSerializer
     ) 
 
-from .models import Track
+from .models import Track, PlayList, Genre
 
 
 class TrackViewSet(ModelViewSet):
+    parser_classes =( MultiPartParser,)
     queryset = Track.objects.all()
 
     def list(self, request, *args, **kwargs):
@@ -87,3 +91,25 @@ class TrackViewSet(ModelViewSet):
     #             return Response('Unliked!')
 
    
+class GenreView(ListAPIView):
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+
+
+class PlayListViewSet(ModelViewSet):
+    parser_classes = (MultiPartParser, )
+    queryset = PlayList.objects.all()
+    serializer_class = CreatePlayListSerializer
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            self.permission_classes = [AllowAny]
+        # if self.action == 'comment' and self.request.method == 'DELETE':
+        #     self.permission_classes = [IsOwner]
+        if self.action in ['create', 'comment', 'set_rating', 'like']:
+            self.permission_classes = [IsAuthenticated]
+        if self.action in ['destroy', 'update', 'partial_update']:
+            self.permission_classes = [IsOwner]
+        return super().get_permissions()
+    
+

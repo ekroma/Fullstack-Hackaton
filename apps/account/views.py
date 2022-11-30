@@ -7,7 +7,7 @@ from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
-
+ 
 from .serializers import (
     UserRegistrationSerializer,
     PasswordChangeSerializer,
