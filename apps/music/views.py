@@ -90,7 +90,6 @@ class TrackViewSet(ModelViewSet):
     #             serializer.unlike()
     #             return Response('Unliked!')
 
-   
 class GenreView(ListAPIView):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
@@ -111,5 +110,4 @@ class PlayListViewSet(ModelViewSet):
         if self.action in ['destroy', 'update', 'partial_update']:
             self.permission_classes = [IsOwner]
         return super().get_permissions()
-    
-
+\
