@@ -14,4 +14,3 @@ class CheckTime():
         print('total time'.upper(), end-start)
 
         return response
-        

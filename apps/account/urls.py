@@ -24,3 +24,4 @@ urlpatterns = [
     path('delete-account/', DeleteAccountView.as_view(), name='delete_account'),
     path('logout/', LogoutView.as_view(), name='auth_logout'),
 ]
+# asliulhdgbuvydbsg
