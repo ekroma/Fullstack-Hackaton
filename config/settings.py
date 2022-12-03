@@ -7,7 +7,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-
+from corsheaders.defaults import default_headers
 from pathlib import Path
 from datetime import timedelta
 from decouple import config
@@ -52,6 +52,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'corsheaders.middleware.CorsPostCsrfMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -67,13 +68,24 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'config.urls'
 
-
-
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "delete",
+]
 
 CORS_ALLOWED_ORIGINS = [
-    "https://18.197.10.36",
-    "http://localhost:8080",
-    "http://127.0.0.1:9000",
+    "http://read.only.com",
+    "http://3.71.34.7",
+    'http://localhost:3000'
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://change.allowed.com",
+]
+
+CORS_ORIGIN_WHITELIST = [
+    'http://127.0.0.1:3000',
+    'http://localhost:3030',
+    'http://3.71.34.7'
 ]
 
 CORS_ALLOW_METHODS = [
