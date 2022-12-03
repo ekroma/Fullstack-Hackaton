@@ -8,7 +8,9 @@ router.register('tracks', TrackViewSet, 'tracks')
 router.register('playlists', PlayListViewSet, 'playlists')
 
 urlpatterns = [
-    path('tracks/<str:pk>/', RetrieveTrackView.as_view(), name='streaming')
+
+    path('tracks/<str:pk>/', RetrieveTrackView.as_view(), name='retrieve')
+
 ]
 
 urlpatterns += router.urls

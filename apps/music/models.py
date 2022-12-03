@@ -18,7 +18,7 @@ User = get_user_model()
 
 class Track(models.Model):
     title = models.CharField('Title', max_length=200)
-    file = models.FileField(
+    track = models.FileField(
         'Track', 
         upload_to=get_upload_path_track,
         validators=[FileExtensionValidator(allowed_extensions=['mp3','wav'])]
@@ -42,19 +42,16 @@ class Track(models.Model):
         validators=[FileExtensionValidator(allowed_extensions=['jpg']), validate_image_size]
     )
     created_at = models.DateTimeField(auto_now_add=True)
-    author = models.CharField('Author', max_length=100, blank=True)
     user = models.ForeignKey(
         verbose_name='Автор',
         to=User,
         on_delete=models.CASCADE,
-        related_name='track',
+        related_name='track'
     )
     likes = models.PositiveIntegerField(default=0)
     downloads = models.PositiveIntegerField(default=0)
 
     def save(self, *args, **kwargs):
-        if not self.author:
-            self.author = self.user.username
         if not self.slug:
             self.slug = slugify(self.title + get_time())
         super().save(*args, **kwargs)
@@ -115,9 +112,3 @@ class PlayList(models.Model):
     #     if not self.title:
     #         self.title = f'{self.user}\'s playlist'
     #     super().save(*args, **kwargs)
-
-
-
-
-
-

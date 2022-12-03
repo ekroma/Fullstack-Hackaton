@@ -123,8 +123,8 @@ class RetrieveTrackView(APIView):
         track = get_object_or_404(Track, slug=pk)
         if os.path.exists(track.file.path):
             # self.set_play()
-            # response = HttpResponse('', content_type="audio/mpeg", status=206)
-            # response['X-Accel-Redirect'] = f"/mp3/{track.file.name}"
+            #response = HttpResponse('', content_type="audio/mpeg", status=206)
+            #response['X-Accel-Redirect'] = f"/mp3/{track.file.name}"
             response = FileResponse(open(track.file.path, 'rb'), filename=track.file.name)
             # track_img = FileResponse(open(track.image.path, 'rb'), filename=track.image.name)
             # response = {'track':track_file, 'image': track_img}
