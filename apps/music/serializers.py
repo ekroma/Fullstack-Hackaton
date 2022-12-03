@@ -1,7 +1,14 @@
 from rest_framework import serializers
-
+from django_filters.rest_framework import DjangoFilterBackend
 from apps.base.services import delete_old_file
-from .models import Album, Track, PlayList, Genre
+from .models import Album, Track, PlayList, Genre, TrackImage
+
+
+class TrackImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TrackImage
+        fields = 'image', 
+
 
 class TrackSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
@@ -19,17 +26,16 @@ class TrackSerializer(serializers.ModelSerializer):
         return attrs
 
     def to_representation(self, instance):
-        rep = super().to_representation(instance)   
+        rep = super().to_representation(instance)  
         return rep
 
 class TrackListSerialiers(serializers.ModelSerializer):
     class Meta:
         model = Track
-        fields = ('image', 'title', 'slug')
+        fields = ('slug','image', 'title', 'file')
 
-    def to_representation(self, instance):
-        rep = super().to_representation(instance)
-        return rep
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['title', 'user__display_name', 'album__name', 'genre__name']
 
 class PlayListSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')

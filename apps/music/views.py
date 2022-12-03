@@ -1,6 +1,11 @@
+import os
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
+from django.http import FileResponse, Http404, HttpResponse
+from django.shortcuts import get_object_or_404
 from .permissions import IsOwner
+from rest_framework.views import APIView
 from rest_framework.permissions import (
     IsAuthenticated, 
     IsAdminUser, 
@@ -45,11 +50,8 @@ class TrackViewSet(ModelViewSet):
         if self.action in ['destroy', 'update', 'partial_update']:
             self.permission_classes = [IsOwner]
         return super().get_permissions()
-    
+
     def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.views_count += 1
-        instance.save()
         return super().retrieve(request, *args, **kwargs)
     
     # @action(methods=['POST', 'PATCH'], detail=True, url_path='set_rating')
@@ -110,3 +112,22 @@ class PlayListViewSet(ModelViewSet):
         if self.action in ['destroy', 'update', 'partial_update']:
             self.permission_classes = [IsOwner]
         return super().get_permissions()
+
+class RetrieveTrackView(APIView):
+    """ Воспроизведение трека
+    """
+    # def set_play(self):
+    #     self.track.plays_count += 1
+    #     self.track.save()
+    def get(self, request, pk):
+        track = get_object_or_404(Track, slug=pk)
+        if os.path.exists(track.file.path):
+            # self.set_play()
+            # response = HttpResponse('', content_type="audio/mpeg", status=206)
+            # response['X-Accel-Redirect'] = f"/mp3/{track.file.name}"
+            response = FileResponse(open(track.file.path, 'rb'), filename=track.file.name)
+            # track_img = FileResponse(open(track.image.path, 'rb'), filename=track.image.name)
+            # response = {'track':track_file, 'image': track_img}
+            return response
+        else:
+            return Http404

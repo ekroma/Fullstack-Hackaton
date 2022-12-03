@@ -12,6 +12,10 @@ def validate_image_size(img):
 def get_upload_path_album(instance, file):
     return f'album/user_{instance.user.username}/{file}'
 
+def get_upload_path_track_image(instance, file):
+    return f'track_image/user_{instance.user.username}/{file}'
+
+
 def get_upload_path_track(instance, file):
     return f'track/user_{instance.user.username}/{file}'
 

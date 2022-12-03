@@ -50,9 +50,9 @@ INSTALLED_APPS = [
     ]
 CORS_ORIGIN_ALLOW_ALL = True
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -165,12 +165,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+EMAIL_SUBJECT_PREFIX = '[SuperService]',
 EMAIL_BACKENDS = 'django.core.mail.backends.smtp.EmailBackend' 
 EMAIL_HOST_USER = config('EMAIL_HOST_USER') 
 EMAIL_PORT = config('EMAIL_PORT', default=587)
 EMAIL_HOST = config('EMAIL_HOST') 
 EMAIL_HOST_PASSWORD = config('EMAIL_PASSWORD') 
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
+EMAIL_USE_SSL = config('EMAIL_USE_SSL', cast=bool)
 
 AUTH_USER_MODEL = 'account.User'
 
@@ -206,6 +208,54 @@ CACHES = {
         'LOCATION': BASE_DIR / 'caches/',
     }
 }
-
-CACHE_MIDDLEWARE_SECONDS = 60 * 60
 ACTIVATION_CODE_URL = config('ACTIVATE_CODE_URL')
+
+
+# CACHE_MIDDLEWARE_ALIAS = '...'    
+CACHE_MIDDLEWARE_SECONDS = 60 * 60
+
+# ADMINS = (
+#     ('admin', config('ADMIN')),
+#     ...
+# )
+
+# SERVER_EMAIL = config('ADMIN'),
+# DEFAULT_FROM_EMAIL = config('ADMIN'),
+
+# EMAIL_FILE_PATH = 'email-backend'
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'formatters': {
+#         'console': {
+#             'format': '%(name)-12s %(levelname)-8s %(message)s'
+#         },
+#         'file': {
+#             'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
+#         }
+#     },
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#             'formatter': 'console'
+#         },
+#         'file': {
+#             'level': 'DEBUG',
+#             'class': 'logging.FileHandler',
+#             'formatter': 'file',
+#             'filename': 'debug.log'
+#         }
+#     },
+#     'loggers': {
+#         '': {
+#             'level': 'DEBUG',
+#             'handlers': ['console', 'file']
+#         }
+#     },
+#     'mail_admins': {
+#             'level': 'DEBUG',
+#             'class': 'django.utils.log.AdminEmailHandler',
+#             'include_html': True,
+#         },
+# }
