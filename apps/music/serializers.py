@@ -16,7 +16,11 @@ class TrackSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Track
-        fields = '__all__'
+        fields = ('slug','image', 'title')
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['title', 'user__display_name', 'album__name', 'genre__name']
+
 
     def create(self, validated_data):
         return super().create(validated_data)

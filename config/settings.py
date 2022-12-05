@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     #frameworks
     'rest_framework',
     'drf_yasg',
+    'crispy_forms',
+    'django_filters',
     'rest_framework_simplejwt',
     'corsheaders',
     #apps
@@ -189,6 +191,9 @@ AUTH_USER_MODEL = 'account.User'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
     ),
 
     'SEARCH_PARAM': 'q'
