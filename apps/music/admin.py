@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Track, TrackImage, Genre, Album, PlayList
+from .models import Track, TrackImage, Genre, PlayList
 
 
 class TabularInlineImage(admin.TabularInline):
@@ -12,12 +12,6 @@ class GenreAdmin(admin.ModelAdmin):
     list_display = ('name',)
     list_display_links = ('name',)
     
-@admin.register(Album)
-class AlbumAdmin(admin.ModelAdmin):
-    list_display = ('id','user', 'name')
-    list_display_links = ('user',)
-    list_filter = ('user',)
-
 @admin.register(Track)
 class TrackAdmin(admin.ModelAdmin):
     inlines = [TabularInlineImage, ]

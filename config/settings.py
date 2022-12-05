@@ -7,7 +7,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-from corsheaders.defaults import default_headers
 from pathlib import Path
 from datetime import timedelta
 from decouple import config
@@ -41,19 +40,24 @@ INSTALLED_APPS = [
 
     #frameworks
     'rest_framework',
+    'django_filters',
     'drf_yasg',
     'rest_framework_simplejwt',
     'corsheaders',
+    'crispy_forms',
     #apps
     'apps.account',
     'apps.music',
+    'apps.review',
     ]
+
 CORS_ORIGIN_ALLOW_ALL = True
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'corsheaders.middleware.CorsPostCsrfMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -68,14 +72,11 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'config.urls'
 
-CORS_ALLOW_HEADERS = list(default_headers) + [
-    "delete",
-]
-
 CORS_ALLOWED_ORIGINS = [
     "http://read.only.com",
     "http://3.71.34.7",
-    'http://localhost:3000'
+    'http://localhost:3000',
+    'http://localhost:8000'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -85,7 +86,9 @@ CSRF_TRUSTED_ORIGINS = [
 CORS_ORIGIN_WHITELIST = [
     'http://127.0.0.1:3000',
     'http://localhost:3030',
-    'http://3.71.34.7'
+    'http://3.71.34.7',
+    'http://127.0.0.1:8000',
+    'http://localhost:8080'
 ]
 
 CORS_ALLOW_METHODS = [
@@ -177,14 +180,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-EMAIL_SUBJECT_PREFIX = '[SuperService]',
 EMAIL_BACKENDS = 'django.core.mail.backends.smtp.EmailBackend' 
 EMAIL_HOST_USER = config('EMAIL_HOST_USER') 
 EMAIL_PORT = config('EMAIL_PORT', default=587)
 EMAIL_HOST = config('EMAIL_HOST') 
 EMAIL_HOST_PASSWORD = config('EMAIL_PASSWORD') 
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
-EMAIL_USE_SSL = config('EMAIL_USE_SSL', cast=bool)
 
 AUTH_USER_MODEL = 'account.User'
 
@@ -214,10 +215,12 @@ SIMPLE_JWT = {
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
 CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379'
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': BASE_DIR / 'caches/',
-    }
-}
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+#         'LOCATION': BASE_DIR / 'caches/',
+#     }
+# }
+
+# CACHE_MIDDLEWARE_SECONDS = 60 * 60
 ACTIVATION_CODE_URL = config('ACTIVATE_CODE_URL')

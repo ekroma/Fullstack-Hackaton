@@ -48,6 +48,11 @@ class User(AbstractBaseUser):
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
 
+    # def save(self, *args, **kwargs):
+    #     if not self.avatar:
+    #         self.avatar = 'media/'
+    #     super().save(*args, **kwargs)
+
     def __str__(self) -> str:
         return self.username
 
