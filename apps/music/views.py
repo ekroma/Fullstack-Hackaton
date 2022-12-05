@@ -1,4 +1,5 @@
 import os
+from django_filters import rest_framework as filters
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
@@ -22,6 +23,12 @@ from .serializers import (
 
 from .models import Track, PlayList, Genre
 
+class Trackist(ListAPIView):
+    queryset = Track.objects.all()
+    serializer_class = TrackListSerialiers
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_fields = ('genre', 'author')
+    search_fields = ['title', 'author']
 
 class TrackViewSet(ModelViewSet):
     parser_classes =( MultiPartParser,)
@@ -114,22 +121,19 @@ class PlayListViewSet(ModelViewSet):
         return super().get_permissions()
 
 class RetrieveTrackView(APIView):
-    """ Воспроизведение трека
-    """
+
     # def set_play(self):
-    #     self.track.plays_count += 1
+    #     self.track.plays += 1
     #     self.track.save()
+
     def get(self, request, pk):
-        track = get_object_or_404(Track, slug=pk)
-        if os.path.exists(track.file.path):
+        self.track = get_object_or_404(Track, slug=pk)
+        if os.path.exists(self.track.file.path):
             # self.set_play()
-            #response = HttpResponse('', content_type="audio/mpeg", status=206)
-            #response['X-Accel-Redirect'] = f"/mp3/{track.file.name}"
-            response = FileResponse(open(track.file.path, 'rb'), filename=track.file.name)
-            # track_img = FileResponse(open(track.image.path, 'rb'), filename=track.image.name)
-            # response = {'track':track_file, 'image': track_img}
+           # response = HttpResponse('', content_type="audio/mpeg", status=206)
+           # response['track'] = f"/mp3/{self.track.file.name}"
+           # response['img'] = f"/media/{self.track.image.name}"
+	    response = FileResponse(open(self.track.file.path, 'rb'), filename=self.track.file.name)
             return response
         else:
             return Http404
-
-
