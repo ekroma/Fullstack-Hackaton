@@ -1,7 +1,7 @@
 import os
 from rest_framework import filters
 from django_filters import rest_framework as rest_filter
-# from rest_framework.response import Response
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 # from django.http import FileResponse, Http404, HttpResponse
@@ -18,26 +18,33 @@ from rest_framework.generics import ListAPIView
 from rest_framework.parsers import MultiPartParser
 from .serializers import (
     CreatePlayListSerializer,
+    LikedPostSerializer,
+    PlayList_ListSerialiers,
+    PlayListSerializer,
     TrackListSerialiers, 
     TrackSerializer,
     GenreSerializer,
     LikeSerializer,
     ) 
 
-from .models import Track, PlayList, Genre
+from .models import Like, Track, PlayList, Genre
 
 
-class TrackList(ListAPIView):
-    queryset = Track.objects.all()
-    serializer_class = TrackListSerialiers
-    filter_backends = [filters.SearchFilter, rest_filter.DjangoFilterBackend, filters.OrderingFilter]
-    search_fields = ['title', 'user__username']
-    filterset_fields = ['genre']
-    ordering_fields = ['plays']
+# class TrackList(ListAPIView):
+#     queryset = Track.objects.all()
+#     serializer_class = TrackListSerialiers
+#     filter_backends = [filters.SearchFilter, rest_filter.DjangoFilterBackend, filters.OrderingFilter]
+#     search_fields = ['title', 'user__username']
+#     filterset_fields = ['genre']
+#     ordering_fields = ['plays']
 
 
 class TrackViewSet(ModelViewSet):
     queryset = Track.objects.all()
+    filter_backends = [filters.SearchFilter, rest_filter.DjangoFilterBackend, filters.OrderingFilter]
+    search_fields = ['title', 'user__username']
+    filterset_fields = ['genre']
+    ordering_fields = ['created_at']
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -58,6 +65,21 @@ class TrackViewSet(ModelViewSet):
             self.permission_classes = [IsOwner]
         return super().get_permissions()
 
+    @action(detail=True, methods=['POST', 'DELETE'])
+    def like(self, request, pk=None):
+        track = self.get_object()
+        serializer = LikeSerializer(data=request.data, context={
+            'request': request,
+            'track': track
+        })
+        if serializer.is_valid(raise_exception=True):
+            if request.method == 'POST':
+                serializer.save(user=request.user)
+                return Response('Liked!')
+            if request.method == 'DELETE':
+                serializer.unlike()
+                return Response('Unliked!')
+
 
 class GenreView(ListAPIView):
     queryset = Genre.objects.all()
@@ -65,9 +87,8 @@ class GenreView(ListAPIView):
 
 
 class PlayListViewSet(ModelViewSet):
-    parser_classes = (MultiPartParser, )
+    # parser_classes = (MultiPartParser, )
     queryset = PlayList.objects.all()
-    serializer_class = CreatePlayListSerializer
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
@@ -77,6 +98,22 @@ class PlayListViewSet(ModelViewSet):
         if self.action in ['destroy', 'update', 'partial_update']:
             self.permission_classes = [IsOwner]
         return super().get_permissions()
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return PlayList_ListSerialiers
+        if self.action == 'create':
+            return CreatePlayListSerializer
+        return PlayListSerializer
+
+
+class LikedPostsView(ListAPIView):
+    serializer_class = LikedPostSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Like.objects.filter(user=user)
 
 
 # class RetrieveTrackView(APIView):

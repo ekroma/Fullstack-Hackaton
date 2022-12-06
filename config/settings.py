@@ -225,14 +225,14 @@ CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379'
 
 ACTIVATION_CODE_URL = config('ACTIVATE_CODE_URL')
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': BASE_DIR / 'caches/',
-    }
-}
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+#         'LOCATION': BASE_DIR / 'caches/',
+#     }
+# }
 
-CACHE_MIDDLEWARE_SECONDS = 60 * 2
+# CACHE_MIDDLEWARE_SECONDS = 60 * 2
 
 ADMINS = (
     ('admin', config('ADMIN')),

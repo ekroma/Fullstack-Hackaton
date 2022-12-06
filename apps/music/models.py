@@ -51,6 +51,10 @@ class Track(models.Model):
     def __str__(self) -> str:
         return self.title
 
+    def get_absolute_url(self):
+        return reverse("track-detail", kwargs={"pk": self.pk})
+    
+
 class TrackImage(models.Model):
     image = models.ImageField(upload_to='track_images')
     track = models.ForeignKey(
@@ -76,6 +80,19 @@ class PlayList(models.Model):
     tracks = models.ManyToManyField(
         to=Track,
         related_name='play_list_tracks'
+    )
+    image = models.ImageField(
+        upload_to='playlist_image',
+        validators=[FileExtensionValidator(allowed_extensions=['jpg']), validate_image_size],
+        
+    )
+
+class PlayListImage(models.Model):
+    image = models.ImageField(upload_to='playlist_images')
+    track = models.ForeignKey(
+        to=PlayList,
+        on_delete=models.CASCADE,
+        related_name='images'
     )
 
 

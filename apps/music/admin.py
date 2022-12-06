@@ -21,8 +21,8 @@ class TrackAdmin(admin.ModelAdmin):
 
 @admin.register(PlayList)
 class PlayListAdmin(admin.ModelAdmin):
-    list_display = ('id','title', 'user')
-    list_display_links = ('user',)
+    list_display = ('id','title', 'user','image')
+    list_display_links = ('user', 'image')
     search_fields = ('user', 'tracks__name')
 
 @admin.register(Like)
