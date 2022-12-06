@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'drf_yasg',
     'rest_framework_simplejwt',
     'corsheaders',
-    'crispy_forms',
     #apps
     'apps.account',
     'apps.music',
@@ -171,6 +170,10 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+STATIC_DIRS = [
+    os.path.join(BASE_DIR, 'config/static'),
+]
+
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -193,7 +196,6 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-
     'SEARCH_PARAM': 'q'
 }
 

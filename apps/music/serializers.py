@@ -17,26 +17,13 @@ class TrackSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Track
-        fields = ('slug','image', 'title')
+        fields = '__all__'
 
     def validate(self, attrs):
         user = self.context['request'].user
         attrs['user'] = user
         return attrs
-
-    # def to_representation(self, instance):
-    #     rep = super().to_representation(instance)
-    #     rep['carousel'] = TrackImageSerializer(
-    #         instance.smart_images.all(), many=True).data
-    #     # rating = instance.ratings.aggregate(Avg('rating'))['rating__avg']
-    #     rep['likes'] = instance.likes.all().count()
-    #     # rep['liked_by'] = LikeSerializer(
-    #     #     instance.likes.all().only('user'), many=True).data
-    #     # if rating:
-    #     #     rep['rating'] = round(rating, 1)
-    #     # else:
-    #     #     rep['rating'] = 0.0
-    #     # return rep
+        
 
 class TrackListSerialiers(serializers.ModelSerializer):
     class Meta:
