@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import Track, TrackImage, Genre, PlayList
-
+from .models import Track, TrackImage, Genre, PlayList, Like
 
 class TabularInlineImage(admin.TabularInline):
     model = TrackImage
@@ -25,3 +24,10 @@ class PlayListAdmin(admin.ModelAdmin):
     list_display = ('id','title', 'user')
     list_display_links = ('user',)
     search_fields = ('user', 'tracks__name')
+
+@admin.register(Like)
+class LikeAdmin(admin.ModelAdmin):
+    list_display = ('user', 'track')
+    list_display_links = ('user','track')
+
+    

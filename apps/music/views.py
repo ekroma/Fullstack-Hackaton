@@ -20,7 +20,8 @@ from .serializers import (
     CreatePlayListSerializer,
     TrackListSerialiers, 
     TrackSerializer,
-    GenreSerializer
+    GenreSerializer,
+    LikeSerializer,
     ) 
 
 from .models import Track, PlayList, Genre
@@ -79,7 +80,11 @@ class PlayListViewSet(ModelViewSet):
 
 
 # class RetrieveTrackView(APIView):
-
+#     """ Воспроизведение трека
+#     """
+#     # def set_play(self):
+#     #     self.track.plays_count += 1
+#     #     self.track.save()
 #     def get(self, request, pk):
 #         track = get_object_or_404(Track, slug=pk)
 #         if os.path.exists(track.file.path):
@@ -92,5 +97,4 @@ class PlayListViewSet(ModelViewSet):
 #             return response
 #         else:
 #             return Http404
-
 

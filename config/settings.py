@@ -7,6 +7,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+
+
 from pathlib import Path
 from datetime import timedelta
 from decouple import config
@@ -47,7 +49,6 @@ INSTALLED_APPS = [
     #apps
     'apps.account',
     'apps.music',
-    'apps.review',
     ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -70,6 +71,9 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'config.urls'
+
+
+
 
 CORS_ALLOWED_ORIGINS = [
     "http://read.only.com",

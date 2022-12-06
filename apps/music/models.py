@@ -77,3 +77,21 @@ class PlayList(models.Model):
         to=Track,
         related_name='play_list_tracks'
     )
+
+
+class Like(models.Model):
+    user = models.ForeignKey(
+        to=User,
+        on_delete=models.CASCADE,
+        related_name='likes'
+    )
+    track = models.ForeignKey(
+        to=Track,
+        on_delete=models.CASCADE,
+        related_name='likes'
+    )
+
+
+    def __str__(self) -> str:
+        return f'Liked by {self.user.username}'
+
