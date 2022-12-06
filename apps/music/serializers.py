@@ -15,7 +15,7 @@ class TrackSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Track
-        fields = ('image', 'title','genre', 'file')
+        fields = ('image', 'title','genre', 'file', 'user')
 
     def create(self, validated_data):
         return super().create(validated_data)

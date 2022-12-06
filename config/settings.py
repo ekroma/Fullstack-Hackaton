@@ -220,7 +220,10 @@ SIMPLE_JWT = {
 }
 
 REST_FRAMEWORK = {
-    'SEARCH_PARAM': 'search'
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'SEARCH_PARAM': 'q'
 }
 
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
@@ -239,7 +242,6 @@ ACTIVATION_CODE_URL = config('ACTIVATE_CODE_URL')
 
 ADMINS = (
     ('admin', config('ADMIN')),
-    ...
 )
 
 SERVER_EMAIL = config('ADMIN'),
