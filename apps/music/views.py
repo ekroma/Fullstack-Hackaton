@@ -4,8 +4,8 @@ from django_filters import rest_framework as rest_filter
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
-# from django.http import FileResponse, Http404, HttpResponse
-# from django.shortcuts import get_object_or_404
+from django.http import FileResponse, Http404, HttpResponse
+from django.shortcuts import get_object_or_404
 from .permissions import IsOwner
 from rest_framework.views import APIView
 from rest_framework.permissions import (
@@ -44,7 +44,7 @@ class TrackViewSet(ModelViewSet):
     filter_backends = [filters.SearchFilter, rest_filter.DjangoFilterBackend, filters.OrderingFilter]
     search_fields = ['title', 'user__username']
     filterset_fields = ['genre']
-    ordering_fields = ['created_at']
+    ordering_fields = ['genre']
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -59,7 +59,7 @@ class TrackViewSet(ModelViewSet):
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
             self.permission_classes = [AllowAny]
-        if self.action in ['create', 'comment', 'set_rating', 'like']:
+        if self.action in ['create', 'like']:
             self.permission_classes = [IsAuthenticated]
         if self.action in ['destroy', 'update', 'partial_update']:
             self.permission_classes = [IsOwner]
@@ -80,6 +80,11 @@ class TrackViewSet(ModelViewSet):
                 serializer.unlike()
                 return Response('Unliked!')
 
+    # def retrieve(self, request, pk):
+    #     res = super().retrieve(request, pk)
+    #     track = get_object_or_404(Track, slug=pk)
+    #     res['file'] =  FileResponse(open(track.file.path, 'rb'), filename=track.file.name)
+    #     return res
 
 class GenreView(ListAPIView):
     queryset = Genre.objects.all()
@@ -87,13 +92,13 @@ class GenreView(ListAPIView):
 
 
 class PlayListViewSet(ModelViewSet):
-    # parser_classes = (MultiPartParser, )
+    parser_classes = (MultiPartParser, )
     queryset = PlayList.objects.all()
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
             self.permission_classes = [AllowAny]
-        if self.action in ['create', 'comment', 'set_rating', 'like']:
+        if self.action in ['create']:
             self.permission_classes = [IsAuthenticated]
         if self.action in ['destroy', 'update', 'partial_update']:
             self.permission_classes = [IsOwner]
@@ -117,8 +122,6 @@ class LikedPostsView(ListAPIView):
 
 
 # class RetrieveTrackView(APIView):
-#     """ Воспроизведение трека
-#     """
 #     # def set_play(self):
 #     #     self.track.plays_count += 1
 #     #     self.track.save()

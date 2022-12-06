@@ -219,6 +219,9 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer', 'Token'),
 }
 
+REST_FRAMEWORK = {
+    'SEARCH_PARAM': 'search'
+}
 
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
 CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379'

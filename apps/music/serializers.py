@@ -15,7 +15,7 @@ class TrackSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Track
-        fields = ('slug','image', 'title','user')
+        fields = ('image', 'title','genre', 'file')
 
     def create(self, validated_data):
         return super().create(validated_data)
@@ -35,7 +35,7 @@ class TrackSerializer(serializers.ModelSerializer):
 class TrackListSerialiers(serializers.ModelSerializer):
     class Meta:
         model = Track
-        fields = ('slug','image', 'title')
+        fields = ('slug','image', 'title', 'genre', 'file')
 
     def update(self, instance, validated_data):
         delete_old_file(instance.file.path)
@@ -113,6 +113,13 @@ class PlayList_ListSerialiers(serializers.ModelSerializer):
         delete_old_file(instance.image.path)
         return super().update(instance, validated_data)
 
+    def to_representation(self, instance):
+        res = super().to_representation(instance)
+        res['lol'] = '123'
+        print('dwdwdd', res)
+        for i in res:
+            print('<<<<<<', i)
+        return res
 
 class PlayListSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
@@ -129,6 +136,16 @@ class PlayListSerializer(serializers.ModelSerializer):
             ex = f'{title}{a}'
         title = ex
         return title
+    
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        track = []
+        print(':::::::', rep)
+        for i in rep['tracks']:
+            track.append(Track.objects.filter(slug=i))
+            print('<<<<<<', track)
+        dep = {'rep':rep,'track':track}
+        return rep
 
 
 class CreatePlayListSerializer(serializers.ModelSerializer):
@@ -139,4 +156,3 @@ class CreatePlayListSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         delete_old_file(instance.cover.path)
         return super().update(instance, validated_data)
-        fields = ['track', 'user', 'url']

@@ -79,13 +79,13 @@ class PlayList(models.Model):
     title = models.CharField('Title',max_length=70)
     tracks = models.ManyToManyField(
         to=Track,
-        related_name='play_list_tracks'
+        related_name='playlist_tracks'
     )
     image = models.ImageField(
         upload_to='playlist_image',
         validators=[FileExtensionValidator(allowed_extensions=['jpg']), validate_image_size],
-        
     )
+    # trakci = models.ManyToManyField(to=Track,blank=True)
 
 class PlayListImage(models.Model):
     image = models.ImageField(upload_to='playlist_images')
