@@ -18,7 +18,8 @@ from .serializers import (
     CreatePlayListSerializer,
     TrackListSerialiers, 
     TrackSerializer,
-    GenreSerializer
+    GenreSerializer,
+    LikeSerializer,
     ) 
 
 from .models import Track, PlayList, Genre
@@ -84,20 +85,20 @@ class TrackViewSet(ModelViewSet):
     #         else:
     #             return Response({'detail': 'Rating object does not exist. Use POST method'})
 
-    # @action(detail=True, methods=['POST', 'DELETE'])
-    # def like(self, request, pk=None):
-    #     laptop = self.get_object()
-    #     serializer = LikeSerializer(data=request.data, context={
-    #         'request': request,
-    #         'laptop': laptop
-    #     })
-    #     if serializer.is_valid(raise_exception=True):
-    #         if request.method == 'POST':
-    #             serializer.save(user=request.user)
-    #             return Response('Liked!')
-    #         if request.method == 'DELETE':
-    #             serializer.unlike()
-    #             return Response('Unliked!')
+    @action(detail=True, methods=['POST', 'DELETE'])
+    def like(self, request, pk=None):
+        track = self.get_object()
+        serializer = LikeSerializer(data=request.data, context={
+            'request': request,
+            'track': track
+        })
+        if serializer.is_valid(raise_exception=True):
+            if request.method == 'POST':
+                serializer.save(user=request.user)
+                return Response('Liked!')
+            if request.method == 'DELETE':
+                serializer.unlike()
+                return Response('Unliked!')
 
 class GenreView(ListAPIView):
     queryset = Genre.objects.all()
@@ -121,19 +122,20 @@ class PlayListViewSet(ModelViewSet):
         return super().get_permissions()
 
 class RetrieveTrackView(APIView):
-
+    """ Воспроизведение трека
+    """
     # def set_play(self):
-    #     self.track.plays += 1
+    #     self.track.plays_count += 1
     #     self.track.save()
-
     def get(self, request, pk):
-        self.track = get_object_or_404(Track, slug=pk)
-        if os.path.exists(self.track.file.path):
+        track = get_object_or_404(Track, slug=pk)
+        if os.path.exists(track.file.path):
             # self.set_play()
-           # response = HttpResponse('', content_type="audio/mpeg", status=206)
-           # response['track'] = f"/mp3/{self.track.file.name}"
-           # response['img'] = f"/media/{self.track.image.name}"
-	    response = FileResponse(open(self.track.file.path, 'rb'), filename=self.track.file.name)
+            #response = HttpResponse('', content_type="audio/mpeg", status=206)
+            #response['X-Accel-Redirect'] = f"/mp3/{track.file.name}"
+            response = FileResponse(open(track.file.path, 'rb'), filename=track.file.name)
+            # track_img = FileResponse(open(track.image.path, 'rb'), filename=track.image.name)
+            # response = {'track':track_file, 'image': track_img}
             return response
         else:
             return Http404

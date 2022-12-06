@@ -2,8 +2,13 @@
 from rest_framework import serializers
 from django_filters.rest_framework import DjangoFilterBackend
 from apps.base.services import delete_old_file
-from .models import Album, Track, PlayList, Genre, TrackImage
-
+from .models import (
+    Track,
+    PlayList,
+    Genre,
+    TrackImage,
+    Like
+)
 
 class TrackImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,8 +23,8 @@ class TrackSerializer(serializers.ModelSerializer):
         model = Track
         fields = ('slug','image', 'title')
 
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['title', 'user__display_name', 'album__name', 'genre__name']
+    # filter_backends = [DjangoFilterBackend]
+    # filterset_fields = ['title', 'user__display_name', 'album__name', 'genre__name']
 
 
     def create(self, validated_data):
@@ -31,8 +36,11 @@ class TrackSerializer(serializers.ModelSerializer):
         return attrs
 
     def to_representation(self, instance):
-        rep = super().to_representation(instance)  
-        return rep
+        representation = super().to_representation(instance)
+        representation['likes'] = instance.likes.all().count()
+        representation['liked_by'] = LikeSerializer(
+            instance.likes.all().only('user'), many=True).data
+        return representation
 
 class TrackListSerialiers(serializers.ModelSerializer):
     class Meta:
@@ -64,14 +72,14 @@ class GenreSerializer(serializers.ModelSerializer):
         fields = ('name')
 
 
-class AlbumSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Album
-        fields = ('id', 'name', 'cover')
+# class AlbumSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Track
+#         fields = ('id', 'name', 'cover')
     
-    def update(self, instance, validated_data):
-        delete_old_file(instance.cover.path)
-        return super().update(instance, validated_data)
+#     def update(self, instance, validated_data):
+#         delete_old_file(instance.cover.path)
+#         return super().update(instance, validated_data)
 
 class CreatePlayListSerializer(serializers.ModelSerializer):
     class Meta:
@@ -81,3 +89,34 @@ class CreatePlayListSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         delete_old_file(instance.cover.path)
         return super().update(instance, validated_data)
+
+class CurrentTrackDefault:
+    requires_context = True
+
+    def __call__(self, serializer_field):
+        return serializer_field.context['track']
+
+class LikeSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source='user.username')
+    track = serializers.HiddenField(default=CurrentTrackDefault())
+    
+    class Meta:
+        model = Like
+        fields = '__all__'
+
+    def create(self, validated_data):
+        user = self.context.get('request').user
+        track = self.context.get('track').pk
+        like = Like.objects.filter(user=user, track=track).first()
+        if like:
+            raise serializers.ValidationError('Already liked')
+        return super().create(validated_data)
+
+    def unlike(self):
+        user = self.context.get('request').user
+        track = self.context.get('track').pk
+        like = Like.objects.filter(user=user, track=track).first()
+        if like:
+            like.delete()
+        else:
+            raise serializers.ValidationError('Not liked yet')

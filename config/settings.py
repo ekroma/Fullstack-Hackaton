@@ -7,7 +7,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-from corsheaders.defaults import default_headers
+# from corsheaders.defaults import default_headers
 from pathlib import Path
 from datetime import timedelta
 from decouple import config
@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     #frameworks
     'rest_framework',
     'drf_yasg',
-    'crispy_forms',
     'django_filters',
     'rest_framework_simplejwt',
     'corsheaders',
@@ -70,9 +69,9 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'config.urls'
 
-CORS_ALLOW_HEADERS = list(default_headers) + [
-    "delete",
-]
+# CORS_ALLOW_HEADERS = list(default_headers) + [
+#     "delete",
+# ]
 
 CORS_ALLOWED_ORIGINS = [
     "http://read.only.com",

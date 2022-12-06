@@ -43,9 +43,8 @@ class Track(models.Model):
         on_delete=models.CASCADE,
         related_name='track',
     )
-    likes = models.PositiveIntegerField(default=0)
+    # likes = models.PositiveIntegerField(default=0)
     downloads = models.PositiveIntegerField(default=0)
-
     def save(self, *args, **kwargs):
         if not self.author:
             self.author = self.user.username
@@ -109,3 +108,18 @@ class PlayList(models.Model):
     #     if not self.title:
     #         self.title = f'{self.user}\'s playlist'
     #     super().save(*args, **kwargs)
+
+class Like(models.Model):
+    user = models.ForeignKey(
+        to=User,
+        on_delete=models.CASCADE,
+        related_name='likes'
+    )
+    music = models.ForeignKey(
+        to=Track,
+        on_delete=models.CASCADE,
+        related_name='likes'
+    )
+
+    def __str__(self) -> str:
+        return f'Liked by {self.user.username}'
